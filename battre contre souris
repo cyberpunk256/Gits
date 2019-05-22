@@ -85,27 +85,27 @@ class App:
             pyxel.quit()
 
         # ====== ctrl cat ======
-        dx = pyxel.mouse_x - self.mcat.pos.x  # x軸方向の移動量(マウス座標 - cat座標)
-        dy = pyxel.mouse_y - self.mcat.pos.y  # y軸方向の移動量(マウス座標 - cat座標)
+        dx = pyxel.mouse_x - self.mcat.pos.x  # x move(mouse coordinate - cat coordinate)
+        dy = pyxel.mouse_y - self.mcat.pos.y  # y move(mouse coordinate - cat coordinate)
         if dx != 0:
-            self.mcat.update(pyxel.mouse_x, pyxel.mouse_y, dx) # 座標と向きを更新
+            self.mcat.update(pyxel.mouse_x, pyxel.mouse_y, dx) # coordinate and arrow
         elif dy != 0:
-            self.mcat.update(pyxel.mouse_x, pyxel.mouse_y, self.mcat.vec) # 座標のみ更新（真上or真下に移動）
+            self.mcat.update(pyxel.mouse_x, pyxel.mouse_y, self.mcat.vec) # only coordinate（right above or right below）
 
         # ====== ctrl enemy ======
         if pyxel.frame_count % 30 == 1:
-            # 画面の右端から
+            # from right side of screen
             new_enemy = Enemy(self.IMG_ID2)
             new_enemy.update(random.randint(WINDOW_W, WINDOW_W+5), random.randint(0, WINDOW_H+5), -self.mcat.vec)
             self.Enemies.append(new_enemy)
-            # 画面の左端から
+            # from left side of screen
             new_enemy = Enemy(self.IMG_ID2)
             new_enemy.update(random.randint(-5, 0), random.randint(0, WINDOW_H+5), -self.mcat.vec)
             self.Enemies.append(new_enemy)
 
         enemy_count = len(self.Enemies)
         for i in range(enemy_count):
-            # P制御
+            # P control
             ex = (self.mcat.pos.x - self.Enemies[i].pos.x)
             ey = (self.mcat.pos.y - self.Enemies[i].pos.y)
             Kp = self.Enemies[i].speed
@@ -113,7 +113,7 @@ class App:
                 self.Enemies[i].update(self.Enemies[i].pos.x + ex * Kp, 
                                         self.Enemies[i].pos.y + ey * Kp, 
                                         self.mcat.vec)
-            # 当たり判定(敵キャラと猫)
+            # hit evaluation(ennemy,cat)
             if ((self.mcat.pos.x < self.Enemies[i].pos.x + ENEMY_W)
                  and (self.Enemies[i].pos.x + ENEMY_W < self.mcat.pos.x + CAT_W)
                  and (self.mcat.pos.y < self.Enemies[i].pos.y + ENEMY_H)
@@ -130,7 +130,7 @@ class App:
                  and (self.Enemies[i].pos.x < self.mcat.pos.x + CAT_W)
                  and (self.mcat.pos.y < self.Enemies[i].pos.y)
                  and (self.Enemies[i].pos.y < self.mcat.pos.y + CAT_H)):
-                # Game Overフラグを立てる
+                # Game Over put flag
                 self.GameOver_flag = 1
 
         # ====== ctrl Ball ======
@@ -158,14 +158,14 @@ class App:
                     self.Balls[i].update(self.Balls[i].pos.x - self.Balls[i].speed, 
                                         self.Balls[i].pos.y, 
                                         self.Balls[i].vec, self.Balls[i].size, self.Balls[i].color)
-                # 当たり判定(敵キャラとボール)
+                # hit evaluation(ennemyとball)
                 enemy_count = len(self.Enemies)
                 for j in range(enemy_count):
                     if ((self.Enemies[j].pos.x < self.Balls[i].pos.x)
                         and (self.Balls[i].pos.x < self.Enemies[j].pos.x + ENEMY_W) 
                         and (self.Enemies[j].pos.y < self.Balls[i].pos.y) 
                         and (self.Balls[i].pos.y < self.Enemies[j].pos.y + ENEMY_H)):
-                        # 消滅(敵インスタンス破棄)
+                        # disappear(enemy instance destroy)
                         del self.Enemies[j]
                         if not self.GameOver_flag:
                             self.Score += 100
